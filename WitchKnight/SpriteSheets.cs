@@ -30,7 +30,7 @@ namespace WitchKnight
         private const string Prefix = "WitchKnight.Resources.Sprites.";
 
         // Hex Moth stands about 1.95 units tall in game, a little taller than the Knight with his horns.
-        private const float HeightInUnits = 1.95f;
+        private const float HeightInUnits = 2.15f;
         private const float FigureHeightInPixels = 380f;
 
         private static Dictionary<string, SheetAnimation>? cache;
