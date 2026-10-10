@@ -20,6 +20,7 @@ namespace WitchKnight
             Moveset.Hook();
             Favours.Hook();
             Barks.Hook();
+            Hex.Hook();
             Log("The moth witch stirs.");
         }
 

@@ -52,13 +52,21 @@ namespace WitchKnight
             "Is that all?",
         };
 
+        private static Barks? runner;
+
         public static void Hook()
         {
             var go = new GameObject("WitchKnight Barks");
             DontDestroyOnLoad(go);
-            go.AddComponent<Barks>();
+            runner = go.AddComponent<Barks>();
 
             ModHooks.SceneChanged += OnSceneChanged;
+        }
+
+        // Coroutines for effects that outlive a scene object, such as burns and pulses.
+        public static void Run(System.Collections.IEnumerator routine)
+        {
+            if (runner != null) runner.StartCoroutine(routine);
         }
 
         public static void Say(string speaker, string text, Color colour)
@@ -90,7 +98,9 @@ namespace WitchKnight
 
         private void Update()
         {
+            if (Input.GetKeyDown(KeyCode.F) && InGame()) Hex.TryCast();
             if (Favours.Offer == null) return;
+            if (Input.GetKeyDown(KeyCode.R)) { Favours.Reroll(); return; }
             if (Input.GetKeyDown(KeyCode.Alpha1) || Input.GetKeyDown(KeyCode.Keypad1)) Favours.Choose(0);
             else if (Input.GetKeyDown(KeyCode.Alpha2) || Input.GetKeyDown(KeyCode.Keypad2)) Favours.Choose(1);
             else if (Input.GetKeyDown(KeyCode.Alpha3) || Input.GetKeyDown(KeyCode.Keypad3)) Favours.Choose(2);
@@ -121,6 +131,10 @@ namespace WitchKnight
             var x = Screen.width - w - 24 * scale;
             var lh = 30 * scale;
 
+            var pct = Mathf.RoundToInt(Hex.Charge / Hex.MaxCharge * 100f);
+            var moon = Hex.Ready ? "<b>Moon Hex READY [F]</b>" : $"Moon Hex {pct}%";
+            Shadowed(new Rect(x, y, w, lh), moon, Hex.Ready ? new Color(0.85f, 0.9f, 1f) : new Color(1f, 1f, 1f, 0.6f), small!);
+            y += lh;
             Shadowed(new Rect(x, y, w, lh), $"Next Favour  {Favours.KillsTowardNext}/{Favours.KillsNeeded}", new Color(1f, 1f, 1f, 0.75f), small!);
             y += lh;
 
@@ -137,7 +151,7 @@ namespace WitchKnight
             if (offer == null) return;
 
             var cardW = 420 * scale;
-            var cardH = 170 * scale;
+            var cardH = 210 * scale;
             var gap = 24 * scale;
             var total = offer.Count * cardW + (offer.Count - 1) * gap;
             var x = (Screen.width - total) / 2f;
@@ -155,13 +169,15 @@ namespace WitchKnight
                 GUI.DrawTexture(new Rect(r.x, r.y, r.width, 4 * scale), Texture2D.whiteTexture);
                 GUI.color = Color.white;
 
-                var next = Favours.Level(p) + 1;
+                var rarity = Favours.OfferRarity?[i] ?? 1;
+                var next = Mathf.Min(Favours.Level(p) + rarity, Favours.MaxLevel);
+                var rhex = ColorUtility.ToHtmlStringRGB(Favours.RarityColour(rarity));
                 var pad = 14 * scale;
                 var inner = new Rect(r.x + pad, r.y + pad, r.width - 2 * pad, r.height - 2 * pad);
                 var hex = ColorUtility.ToHtmlStringRGB(c);
                 GUI.Label(inner,
                     $"<b>[{i + 1}]  <color=#{hex}>{Favours.FavourName(p)} {Roman(next)}</color></b>\n" +
-                    $"<size={Mathf.RoundToInt(19 * scale)}><i>{Favours.Name(p)}</i>\n{Favours.Describe(p, next)}</size>",
+                    $"<size={Mathf.RoundToInt(19 * scale)}><color=#{rhex}>{Favours.RarityName(rarity)}</color> · <i>{Favours.Name(p)}</i>\n{Favours.Describe(p, next)}</size>",
                     text!);
             }
         }
