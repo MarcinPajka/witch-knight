@@ -134,7 +134,7 @@ namespace WitchKnight
         }
 
         // A ring of light that grows to the strike radius and fades.
-        private static void Pulse(Vector3 at, float radius, Color colour)
+        internal static void Pulse(Vector3 at, float radius, Color colour)
         {
             ring ??= MakeRing();
             var go = new GameObject("WitchKnight Pulse");
