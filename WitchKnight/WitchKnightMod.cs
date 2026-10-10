@@ -17,11 +17,11 @@ namespace WitchKnight
         {
             Instance = this;
             ModHooks.HeroUpdateHook += OnHeroUpdate;
+            Moveset.Hook();
             Log("The moth witch stirs.");
         }
 
-        // Swap the Knight for Hex Moth as soon as the hero exists. Later M1 systems
-        // (Moonlight meter, wing-dash, spear moveset) hook in here too.
+        // Swap the Knight for Hex Moth as soon as the hero exists. The moveset lives in Moveset.
         private void OnHeroUpdate()
         {
             var hero = HeroController.instance;
