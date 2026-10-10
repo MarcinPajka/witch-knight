@@ -138,26 +138,37 @@
     for (let x = -15; x < 16; x += 8) { ctx.beginPath(); ctx.moveTo(x, -36); ctx.lineTo(x, -41); ctx.lineTo(x + 5, -41); ctx.lineTo(x + 5, -38); ctx.lineTo(x + 3, -38); ctx.stroke(); }
   }
 
-  function buckler(ctx) {
-    ctx.beginPath(); ctx.arc(-14, -64, 13, 0, Math.PI * 2);
-    ctx.fillStyle = bronzeFill(ctx, -26, -76, -2, -52); ctx.fill(); outline(ctx, 1.5);
-    ctx.beginPath(); ctx.arc(-14, -64, 9, 0, Math.PI * 2); ctx.strokeStyle = C.bronzeDark; ctx.lineWidth = 1.4; ctx.stroke();
-    ctx.beginPath(); ctx.arc(-14, -64, 3.5, 0, Math.PI * 2); ctx.fillStyle = C.moon; ctx.fill();
+  // Hoplite aspis on the far arm, held across the body.
+  function shield(ctx, p) {
+    ctx.save();
+    ctx.translate(4, -62);
+    ctx.beginPath(); ctx.arc(0, 0, 24, 0, Math.PI * 2);
+    ctx.fillStyle = bronzeFill(ctx, -24, -24, 24, 24); ctx.fill(); outline(ctx, 1.8);
+    ctx.beginPath(); ctx.arc(0, 0, 19, 0, Math.PI * 2); ctx.strokeStyle = C.bronzeDark; ctx.lineWidth = 2; ctx.stroke();
+    ctx.beginPath(); ctx.arc(0, 0, 21.5, 0, Math.PI * 2); ctx.strokeStyle = C.bronzeLight; ctx.lineWidth = 0.8; ctx.stroke();
+    // glowing crescent emblem
+    ctx.save(); ctx.shadowColor = C.moon; ctx.shadowBlur = 6 + 4 * p.orb;
+    ctx.beginPath(); ctx.arc(-2, 0, 10, 0, Math.PI * 2); ctx.arc(2.5, -2.5, 8, 0, Math.PI * 2, true);
+    ctx.fillStyle = C.moon; ctx.fill('evenodd'); ctx.restore();
+    ctx.restore();
   }
 
-  function staff(ctx, p) {
+  function spear(ctx, p) {
     ctx.save();
-    ctx.translate(32 + p.staffReach * 10, -48);
+    ctx.translate(30 + p.staffReach * 10, -54);
     ctx.rotate(p.staff);
-    ctx.strokeStyle = C.wood; ctx.lineWidth = 4; ctx.lineCap = 'round';
-    ctx.beginPath(); ctx.moveTo(0, -30); ctx.lineTo(0, 54); ctx.stroke();
-    ctx.lineWidth = 1; ctx.strokeStyle = C.ink; ctx.beginPath(); ctx.moveTo(2.4, -30); ctx.lineTo(2.4, 54); ctx.stroke();
-    // bronze cradle and orb
-    ctx.beginPath(); ctx.moveTo(-6, -32); ctx.quadraticCurveTo(0, -24, 6, -32); ctx.strokeStyle = C.bronze; ctx.lineWidth = 2.5; ctx.stroke();
-    const r = 7 + 2 * p.orb;
-    const g = ctx.createRadialGradient(0, -40, 0, 0, -40, r * 2.2);
-    g.addColorStop(0, C.moonCore); g.addColorStop(0.4, C.moon); g.addColorStop(1, 'rgba(200,224,122,0)');
-    ctx.fillStyle = g; ctx.beginPath(); ctx.arc(0, -40, r * 2.2, 0, Math.PI * 2); ctx.fill();
+    // shaft with a bronze butt-spike
+    ctx.strokeStyle = C.wood; ctx.lineWidth = 3.5; ctx.lineCap = 'round';
+    ctx.beginPath(); ctx.moveTo(0, -52); ctx.lineTo(0, 58); ctx.stroke();
+    ctx.lineWidth = 0.8; ctx.strokeStyle = C.ink; ctx.beginPath(); ctx.moveTo(2, -52); ctx.lineTo(2, 58); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(-2.5, 56); ctx.lineTo(0, 66); ctx.lineTo(2.5, 56); ctx.closePath();
+    ctx.fillStyle = C.bronze; ctx.fill();
+    // leaf-shaped bronze blade with a faint moonlight edge
+    ctx.save(); ctx.shadowColor = C.moon; ctx.shadowBlur = 4 * p.orb;
+    ctx.beginPath(); ctx.moveTo(0, -50); ctx.bezierCurveTo(7, -58, 6, -70, 0, -82); ctx.bezierCurveTo(-6, -70, -7, -58, 0, -50);
+    ctx.fillStyle = bronzeFill(ctx, -6, -82, 6, -50); ctx.fill(); outline(ctx, 1.2);
+    ctx.restore();
+    ctx.beginPath(); ctx.moveTo(0, -52); ctx.lineTo(0, -78); ctx.strokeStyle = C.bronzeDark; ctx.lineWidth = 1; ctx.stroke();
     // hand
     ctx.beginPath(); ctx.arc(0, 4, 4.5, 0, Math.PI * 2); ctx.fillStyle = C.body; ctx.fill(); outline(ctx, 1.2);
     ctx.restore();
@@ -176,15 +187,15 @@
     ctx.restore();
     leg(ctx, -5, p.legBack, p.squash);
     ctx.save(); ctx.rotate(p.tilt);
-    buckler(ctx);
     torso(ctx);
     ctx.restore();
     leg(ctx, 6, p.legFront, p.squash);
     ctx.save(); ctx.rotate(p.tilt);
     ctx.save(); ctx.translate(-2, -88); wing(ctx, 0.1 + p.wingFront, p.wingOpen, 1); ctx.restore();
+    shield(ctx, p);
     mane(ctx);
     head(ctx, p);
-    staff(ctx, p);
+    spear(ctx, p);
     ctx.restore();
     ctx.restore();
   }
