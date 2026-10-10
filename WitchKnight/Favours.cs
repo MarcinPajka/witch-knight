@@ -136,7 +136,7 @@ namespace WitchKnight
             if (Offer != null) return;
 
             KillsTowardNext++;
-            if (KillsTowardNext < KillsNeeded) return;
+            if (KillsTowardNext < KillsNeeded - (Route.Current == RouteKind.Descent ? 1 : 0)) return;
 
             KillsTowardNext = 0;
             KillsNeeded = Mathf.Min(KillsNeeded + KillsStep, MaxKillsNeeded);
@@ -150,7 +150,7 @@ namespace WitchKnight
 
             Offer = open.OrderBy(_ => rng.Next()).Take(3).ToList();
             OfferRarity = Offer.Select(p => Mathf.Min(heroic ? 3 : RollRarity(), MaxLevel - Level(p))).ToList();
-            Barks.Say("Hex Moth", RerollUsed ? "The patrons are watching. Choose: 1, 2 or 3." : "The patrons are watching. Choose 1, 2 or 3, or R to redraw.", Barks.MothColour);
+            Barks.Say("Hex Moth", RerollUsed ? "The patrons are watching. Choose: 1, 2 or 3." : $"The patrons are watching. Choose 1, 2 or 3, or {WitchKnightMod.Settings.RedrawKey} to redraw.", Barks.MothColour);
         }
 
         public static void Choose(int index)
@@ -173,7 +173,8 @@ namespace WitchKnight
         private static int RollRarity()
         {
             var r = rng.NextDouble();
-            return r < 0.06 ? 3 : r < 0.24 ? 2 : 1;
+            var boost = Route.Current == RouteKind.Ascent ? 2.0 : 1.0;
+            return r < 0.06 * boost ? 3 : r < 0.24 * boost ? 2 : 1;
         }
 
         public static string RarityName(int r) => r switch { 3 => "Heroic", 2 => "Rare", _ => "Common" };
@@ -210,6 +211,12 @@ namespace WitchKnight
             var ember = Level(Patron.EmberChoir);
             var tide = Level(Patron.PaleTide);
 
+            // Descent: foes are tougher, so every blow lands lighter.
+            if (Route.Current == RouteKind.Descent && (hit.AttackType == AttackTypes.Nail || hit.AttackType == AttackTypes.Spell))
+            {
+                hit.DamageDealt = Mathf.Max(1, Mathf.RoundToInt(hit.DamageDealt / Route.DescentToughness));
+            }
+
             if (hit.AttackType == AttackTypes.Nail)
             {
                 if (ember > 0) hit.DamageDealt = Mathf.RoundToInt(hit.DamageDealt * (1f + 0.2f * ember));
@@ -225,6 +232,8 @@ namespace WitchKnight
         private static int OnTakeDamage(int hazardType, int damage)
         {
             // hazardType 1 is an ordinary enemy hit; spikes and acid always land.
+            if (damage > 0 && hazardType == 1 && Parry.TryTurnAside()) return 0;
+            if (Route.Current == RouteKind.Ascent) damage *= 2;
             var tide = Level(Patron.PaleTide);
             if (damage > 0 && hazardType == 1 && tide > 0 && Random.value < Mathf.Min(0.1f * tide, 0.4f))
             {
@@ -241,6 +250,7 @@ namespace WitchKnight
             Barks.Say("Run", Hex.Tally(), new Color(0.85f, 0.85f, 0.85f));
             Reset();
             Hex.ResetRun();
+            Route.Reset();
             Barks.Say("Hex Moth", had > 0 ? "The Favours fade... I will climb again." : "Again. From the start.", Barks.MothColour);
         }
 

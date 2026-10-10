@@ -5,8 +5,13 @@ namespace WitchKnight
     /// <summary>
     /// Entry point loaded by the Hollow Knight Modding API.
     /// </summary>
-    public class WitchKnightMod : Mod
+    public class WitchKnightMod : Mod, IGlobalSettings<GlobalSettings>
     {
+        public static GlobalSettings Settings { get; private set; } = new();
+
+        public void OnLoadGlobal(GlobalSettings s) => Settings = s;
+        public GlobalSettings OnSaveGlobal() => Settings;
+
         internal static WitchKnightMod? Instance { get; private set; }
 
         public WitchKnightMod() : base("Witch Knight") { }
@@ -21,6 +26,7 @@ namespace WitchKnight
             Favours.Hook();
             Barks.Hook();
             Hex.Hook();
+            Bestiary.Hook();
             Log("The moth witch stirs.");
         }
 

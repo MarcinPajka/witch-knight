@@ -56,8 +56,8 @@ namespace WitchKnight
             if (target == null) return hit;
 
             var wasReady = Ready;
-            Charge = Mathf.Min(MaxCharge, Charge + ChargePerHit);
-            if (!wasReady && Ready) Barks.Say("Hex Moth", "The moon is full. [F]", Barks.MothColour);
+            Charge = Mathf.Min(MaxCharge, Charge + ChargePerHit * (Route.Current == RouteKind.Ascent ? 2f : 1f));
+            if (!wasReady && Ready) Barks.Say("Hex Moth", $"The moon is full. [{WitchKnightMod.Settings.MoonHexKey}]", Barks.MothColour);
 
             var ember = Favours.Level(Patron.EmberChoir);
             if (ember > 0) Barks.Run(Burn(target, ember));
@@ -86,6 +86,13 @@ namespace WitchKnight
         {
             Strike(at, TollRadius, 4 * level);
             Pulse(at, TollRadius, Favours.Colour(Patron.HollowBell));
+        }
+
+        public static void Riposte(Vector3 at, float radius, int damage)
+        {
+            Charge = Mathf.Min(MaxCharge, Charge + 20f);
+            Strike(at, radius, damage);
+            Pulse(at, radius, new Color(0.95f, 0.75f, 0.35f));
         }
 
         public static void TryCast()

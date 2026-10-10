@@ -98,9 +98,20 @@ namespace WitchKnight
 
         private void Update()
         {
-            if (Input.GetKeyDown(KeyCode.F) && InGame()) Hex.TryCast();
+            var keys = WitchKnightMod.Settings;
+            if (!InGame()) return;
+            if (Input.GetKeyDown(keys.MoonHexKey)) Hex.TryCast();
+            if (Input.GetKeyDown(keys.ParryKey)) Parry.TryRaise();
+
+            if (Route.Choosing)
+            {
+                if (Input.GetKeyDown(KeyCode.Alpha1) || Input.GetKeyDown(KeyCode.Keypad1)) Route.Choose(RouteKind.Descent);
+                else if (Input.GetKeyDown(KeyCode.Alpha2) || Input.GetKeyDown(KeyCode.Keypad2)) Route.Choose(RouteKind.Ascent);
+                return;
+            }
+
             if (Favours.Offer == null) return;
-            if (Input.GetKeyDown(KeyCode.R)) { Favours.Reroll(); return; }
+            if (Input.GetKeyDown(keys.RedrawKey)) { Favours.Reroll(); return; }
             if (Input.GetKeyDown(KeyCode.Alpha1) || Input.GetKeyDown(KeyCode.Keypad1)) Favours.Choose(0);
             else if (Input.GetKeyDown(KeyCode.Alpha2) || Input.GetKeyDown(KeyCode.Keypad2)) Favours.Choose(1);
             else if (Input.GetKeyDown(KeyCode.Alpha3) || Input.GetKeyDown(KeyCode.Keypad3)) Favours.Choose(2);
@@ -119,8 +130,9 @@ namespace WitchKnight
             text.fontSize = Mathf.RoundToInt(26 * scale);
             small.fontSize = Mathf.RoundToInt(22 * scale);
 
-            DrawFavours(scale);
-            DrawOffer(scale);
+            if (WitchKnightMod.Settings.ShowHud) DrawFavours(scale);
+            if (Route.Choosing) DrawRouteChoice(scale);
+            else DrawOffer(scale);
             DrawLines(scale);
         }
 
@@ -132,7 +144,7 @@ namespace WitchKnight
             var lh = 30 * scale;
 
             var pct = Mathf.RoundToInt(Hex.Charge / Hex.MaxCharge * 100f);
-            var moon = Hex.Ready ? "<b>Moon Hex READY [F]</b>" : $"Moon Hex {pct}%";
+            var moon = Hex.Ready ? $"<b>Moon Hex READY [{WitchKnightMod.Settings.MoonHexKey}]</b>" : $"Moon Hex {pct}%";
             Shadowed(new Rect(x, y, w, lh), moon, Hex.Ready ? new Color(0.85f, 0.9f, 1f) : new Color(1f, 1f, 1f, 0.6f), small!);
             y += lh;
             Shadowed(new Rect(x, y, w, lh), $"Next Favour  {Favours.KillsTowardNext}/{Favours.KillsNeeded}", new Color(1f, 1f, 1f, 0.75f), small!);
@@ -143,6 +155,36 @@ namespace WitchKnight
                 Shadowed(new Rect(x, y, w, lh), $"{Favours.FavourName(kv.Key)} {Roman(kv.Value)}", Favours.Colour(kv.Key), small!);
                 y += lh;
             }
+        }
+
+        private void DrawRouteChoice(float scale)
+        {
+            var routes = new[] { RouteKind.Descent, RouteKind.Ascent };
+            var cardW = 460 * scale;
+            var cardH = 190 * scale;
+            var gap = 30 * scale;
+            var x = (Screen.width - (2 * cardW + gap)) / 2f;
+            var y = Screen.height * 0.18f;
+
+            for (var i = 0; i < routes.Length; i++)
+            {
+                var r = new Rect(x + i * (cardW + gap), y, cardW, cardH);
+                var c = Route.Colour(routes[i]);
+                Card(r, c, scale,
+                    $"<b>[{i + 1}]  <color=#{ColorUtility.ToHtmlStringRGB(c)}>{Route.Name(routes[i])}</color></b>\n" +
+                    $"<size={Mathf.RoundToInt(19 * scale)}>{Route.Describe(routes[i])}</size>");
+            }
+        }
+
+        private void Card(Rect r, Color c, float scale, string body)
+        {
+            GUI.color = new Color(0f, 0f, 0f, 0.7f);
+            GUI.DrawTexture(r, Texture2D.whiteTexture);
+            GUI.color = c;
+            GUI.DrawTexture(new Rect(r.x, r.y, r.width, 4 * scale), Texture2D.whiteTexture);
+            GUI.color = Color.white;
+            var pad = 14 * scale;
+            GUI.Label(new Rect(r.x + pad, r.y + pad, r.width - 2 * pad, r.height - 2 * pad), body, text!);
         }
 
         private void DrawOffer(float scale)

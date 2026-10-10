@@ -56,6 +56,11 @@
       "loop": false,
       "frames": 8
     },
+    "block": {
+      "fps": 16,
+      "loop": false,
+      "frames": 5
+    },
     "hurt": {
       "fps": 14,
       "loop": false,
