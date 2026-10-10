@@ -1,0 +1,10 @@
+bin/
+obj/
+.vs/
+.idea/
+*.user
+API/
+LocalBuildProperties.props
+# Never commit game files
+*.assets
+Managed/
