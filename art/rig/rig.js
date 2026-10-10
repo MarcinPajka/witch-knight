@@ -4,7 +4,7 @@
   const C = {
     pale: '#eeeaf6', paleShade: '#b9add6', ink: '#0c0914', body: '#241634',
     cloakTop: '#57357a', cloakBottom: '#170d24', cloakLining: '#2e1b45', moon: '#c8e07a', moonCore: '#f4ffd0',
-    silverLight: '#f4f3fa', silver: '#b8b6c8', silverDark: '#5d5a72',
+    hair: '#cdc5e6', hairShade: '#8f84b8', silverLight: '#f4f3fa', silver: '#b8b6c8', silverDark: '#5d5a72',
     bronzeLight: '#e0b56a', bronze: '#b07a3a', bronzeDark: '#6e4520', wood: '#3a2c20',
   };
 
@@ -59,9 +59,9 @@
   // Silver crescent diadem worn at the helmet's brow, horns up, with a moonstone.
   function crown(ctx, p) {
     ctx.save();
-    ctx.translate(8, -26);
-    ctx.rotate(-0.05);
-    ctx.scale(0.62, 0.55);
+    ctx.translate(2, -28);
+    ctx.rotate(-0.2);
+    ctx.scale(0.72, 0.62);
     ctx.beginPath();
     ctx.moveTo(-22, 4);
     ctx.bezierCurveTo(-30, -8, -24, -26, -14, -32);
@@ -140,47 +140,69 @@
     ctx.restore();
   }
 
+  // Uncovered head: a pale moth-witch face with large moonlit eyes, silver hair swept
+  // back into a long tail, the crescent diadem at the brow and antennae rising forward.
   function head(ctx, p) {
     ctx.save();
     ctx.translate(6, -120);
     ctx.rotate(p.head);
-    // mask, mostly hidden by the helmet; shows through the eye slot and face gap
-    ctx.beginPath(); ctx.ellipse(4, 2, 21, 22, 0, 0, Math.PI * 2);
-    ctx.fillStyle = C.pale; ctx.fill();
-    // crest of moth fur, running front to back
+    const sway = p.wingBack * 10 + p.wingOpen * 4;
+    // hair, back layer: long tail falling behind the shoulders
     ctx.beginPath();
-    ctx.moveTo(16, -27);
-    ctx.bezierCurveTo(14, -54, -26, -60, -44, -18);
-    ctx.lineTo(-31, -15);
-    ctx.bezierCurveTo(-22, -38, 2, -42, 8, -29);
+    ctx.moveTo(-6, -24);
+    ctx.bezierCurveTo(-34, -26, -40, 4, -36 - sway * 0.4, 30);
+    ctx.bezierCurveTo(-34 - sway, 48, -40 - sway, 60, -48 - sway, 70);
+    ctx.bezierCurveTo(-30 - sway, 62, -22, 40, -16, 18);
     ctx.closePath();
-    ctx.fillStyle = C.pale; ctx.fill(); outline(ctx, 1.6);
-    ctx.strokeStyle = C.paleShade; ctx.lineWidth = 1.2;
-    for (const [x0, y0, x1, y1] of [[10, -34, 4, -48], [0, -36, -8, -50], [-10, -34, -20, -46], [-20, -28, -32, -36]]) {
-      ctx.beginPath(); ctx.moveTo(x0, y0); ctx.lineTo(x1, y1); ctx.stroke();
+    ctx.fillStyle = C.hair; ctx.fill(); outline(ctx, 1.5);
+    ctx.strokeStyle = C.hairShade; ctx.lineWidth = 1.1;
+    for (const [x0, y0, x1, y1, x2, y2] of [[-14, -14, -30, 10, -34 - sway, 44], [-20, -6, -32, 22, -40 - sway, 58]]) {
+      ctx.beginPath(); ctx.moveTo(x0, y0); ctx.quadraticCurveTo(x1, y1, x2, y2); ctx.stroke();
     }
-    // Corinthian helmet: dome, neck flare, nose guard and cheek guard
+    // face: soft oval, slightly pointed chin
     ctx.beginPath();
-    ctx.moveTo(-31, 22);
-    ctx.bezierCurveTo(-36, 0, -30, -30, 0, -30);
-    ctx.bezierCurveTo(22, -30, 31, -14, 30, -2);
-    ctx.lineTo(29, 15); ctx.lineTo(24, 15); ctx.lineTo(23, 5);
-    ctx.lineTo(16, 7); ctx.lineTo(17, 23);
-    ctx.bezierCurveTo(10, 29, -14, 29, -22, 25);
+    ctx.moveTo(-14, -18);
+    ctx.bezierCurveTo(4, -28, 24, -18, 24, 0);
+    ctx.bezierCurveTo(24, 14, 14, 24, 6, 26);
+    ctx.bezierCurveTo(-4, 26, -14, 18, -16, 6);
     ctx.closePath();
-    ctx.fillStyle = silverFill(ctx, -24, -30, 24, 26); ctx.fill(); outline(ctx, 1.8);
-    // brow ridge and cheek line
-    ctx.strokeStyle = C.silverDark; ctx.lineWidth = 1.4;
-    ctx.beginPath(); ctx.moveTo(-26, -6); ctx.bezierCurveTo(-8, -12, 14, -12, 29, -6); ctx.stroke();
-    ctx.beginPath(); ctx.moveTo(-20, 8); ctx.bezierCurveTo(-6, 4, 6, 6, 14, 18); ctx.stroke();
-    // almond eye slot with her eye inside
-    ctx.beginPath(); ctx.moveTo(1, 0); ctx.quadraticCurveTo(14, -14, 27, -2); ctx.quadraticCurveTo(14, 10, 1, 0); ctx.closePath();
+    const fg = ctx.createLinearGradient(-14, -20, 22, 24);
+    fg.addColorStop(0, '#fbf9ff'); fg.addColorStop(1, '#d9d2ea');
+    ctx.fillStyle = fg; ctx.fill(); outline(ctx, 1.7);
+    // large almond eye with a moonlit iris and a lash line
+    ctx.save();
+    ctx.translate(11, -1);
+    ctx.rotate(-0.12);
+    ctx.beginPath(); ctx.moveTo(-8, 0); ctx.quadraticCurveTo(1, -9, 10, -1); ctx.quadraticCurveTo(2, 7, -8, 0); ctx.closePath();
     ctx.fillStyle = C.ink; ctx.fill();
-    ctx.beginPath(); ctx.arc(17, -2.5, 2.2, 0, Math.PI * 2); ctx.fillStyle = C.moon; ctx.fill();
+    ctx.save(); ctx.shadowColor = C.moon; ctx.shadowBlur = 5 + 3 * p.orb;
+    ctx.beginPath(); ctx.arc(3, -1, 3.6, 0, Math.PI * 2); ctx.fillStyle = C.moon; ctx.fill(); ctx.restore();
+    ctx.beginPath(); ctx.arc(4.4, -2.4, 1.1, 0, Math.PI * 2); ctx.fillStyle = C.moonCore; ctx.fill();
+    ctx.strokeStyle = C.ink; ctx.lineWidth = 2; ctx.lineCap = 'round';
+    ctx.beginPath(); ctx.moveTo(-9, -1); ctx.quadraticCurveTo(1, -10, 11, -2); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(10, -2); ctx.lineTo(13, -5); ctx.stroke();
+    ctx.restore();
+    // brow and a small, calm mouth
+    ctx.strokeStyle = C.silverDark; ctx.lineWidth = 1.2; ctx.lineCap = 'round';
+    ctx.beginPath(); ctx.moveTo(4, -12); ctx.quadraticCurveTo(12, -15, 19, -11); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(12, 16); ctx.quadraticCurveTo(15, 17, 17, 15); ctx.stroke();
+    // hair, front layer: fringe swept back over the crown
+    ctx.beginPath();
+    ctx.moveTo(18, -16);
+    ctx.bezierCurveTo(12, -34, -18, -38, -30, -18);
+    ctx.bezierCurveTo(-26, -6, -20, 2, -16, 8);
+    ctx.bezierCurveTo(-14, -6, -6, -14, 4, -16);
+    ctx.bezierCurveTo(8, -12, 14, -12, 18, -16);
+    ctx.closePath();
+    ctx.fillStyle = C.hair; ctx.fill(); outline(ctx, 1.5);
+    ctx.strokeStyle = C.hairShade; ctx.lineWidth = 1.1;
+    for (const [x0, y0, x1, y1] of [[8, -24, -14, -26], [0, -18, -20, -14], [12, -18, -4, -30]]) {
+      ctx.beginPath(); ctx.moveTo(x0, y0); ctx.quadraticCurveTo((x0 + x1) / 2, y1 - 4, x1, y1); ctx.stroke();
+    }
     crown(ctx, p);
-    // antennae sweep forward from the helmet's brow
-    ctx.save(); ctx.translate(14, -27); ctx.scale(-1, 1); ctx.globalAlpha = 0.6; antenna(ctx, p.antenna * 0.8 - 0.2, -1); ctx.restore();
-    ctx.save(); ctx.translate(18, -25); ctx.scale(-1, 1); antenna(ctx, p.antenna - 0.05, -1); ctx.restore();
+    // antennae sweep forward from the brow
+    ctx.save(); ctx.translate(8, -28); ctx.scale(-1, 1); ctx.globalAlpha = 0.6; antenna(ctx, p.antenna * 0.8 - 0.2, -1); ctx.restore();
+    ctx.save(); ctx.translate(12, -26); ctx.scale(-1, 1); antenna(ctx, p.antenna - 0.05, -1); ctx.restore();
     ctx.restore();
   }
 
