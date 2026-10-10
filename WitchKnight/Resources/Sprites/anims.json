@@ -54,7 +54,7 @@
     "cast": {
       "fps": 14,
       "loop": false,
-      "frames": 7
+      "frames": 8
     },
     "hurt": {
       "fps": 14,

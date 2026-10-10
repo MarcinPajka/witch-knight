@@ -13,7 +13,7 @@
   const BASE = {
     bob: 0, tilt: 0, legBack: 0, legFront: 0, wingBack: 0, wingFront: 0,
     wingOpen: 0, staff: 0, staffReach: 0, staffLift: 0, antenna: 0, head: 0, orb: 1, squash: 0,
-    rot: 0, dx: 0, alpha: 1, shieldUp: 0, flash: 0,
+    rot: 0, dx: 0, alpha: 1, shieldUp: 0, shieldBack: 0, flash: 0, hex: 0, spin: 0,
   };
 
   function bronzeFill(ctx, x0, y0, x1, y1) {
@@ -142,8 +142,8 @@
   // Hoplite aspis on the far arm, held across the body.
   function shield(ctx, p) {
     ctx.save();
-    ctx.translate(4 + p.shieldUp * 8, -62 - p.shieldUp * 14);
-    ctx.rotate(p.shieldUp * 0.2);
+    ctx.translate(4 + p.shieldUp * 8 - p.shieldBack * 22, -62 - p.shieldUp * 14 + p.shieldBack * 6);
+    ctx.rotate(p.shieldUp * 0.2 - p.shieldBack * 0.5);
     ctx.beginPath(); ctx.arc(0, 0, 24, 0, Math.PI * 2);
     ctx.fillStyle = bronzeFill(ctx, -24, -24, 24, 24); ctx.fill(); outline(ctx, 1.8);
     ctx.beginPath(); ctx.arc(0, 0, 19, 0, Math.PI * 2); ctx.strokeStyle = C.bronzeDark; ctx.lineWidth = 2; ctx.stroke();
@@ -152,6 +152,35 @@
     ctx.save(); ctx.shadowColor = C.moon; ctx.shadowBlur = 6 + 4 * p.orb;
     ctx.beginPath(); ctx.arc(-2, 0, 10, 0, Math.PI * 2); ctx.arc(2.5, -2.5, 8, 0, Math.PI * 2, true);
     ctx.fillStyle = C.moon; ctx.fill('evenodd'); ctx.restore();
+    ctx.restore();
+  }
+
+  // Free hand thrust forward with a moonlight hex sigil, used by the cast.
+  function hexHand(ctx, p) {
+    if (p.hex <= 0.01) return;
+    const k = p.hex, hx = 14 + 30 * k, hy = -78 - 6 * k;
+    ctx.save();
+    ctx.strokeStyle = C.body; ctx.lineWidth = 6; ctx.lineCap = 'round';
+    ctx.beginPath(); ctx.moveTo(6, -80); ctx.quadraticCurveTo(hx - 10, hy + 8, hx, hy); ctx.stroke();
+    ctx.lineWidth = 1.2; ctx.strokeStyle = C.ink; ctx.stroke();
+    // open palm with spread fingers
+    ctx.fillStyle = C.body;
+    ctx.beginPath(); ctx.arc(hx, hy, 4.5, 0, Math.PI * 2); ctx.fill(); outline(ctx, 1.1);
+    ctx.strokeStyle = C.body; ctx.lineWidth = 2.2;
+    for (const a of [-0.9, -0.3, 0.3, 0.9]) { ctx.beginPath(); ctx.moveTo(hx, hy); ctx.lineTo(hx + Math.cos(a) * 8, hy + Math.sin(a) * 8); ctx.stroke(); }
+    // sigil: outer ring with rune ticks, inner crescent
+    const sx = hx + 20 + 10 * k, r = 8 + 18 * k;
+    ctx.translate(sx, hy);
+    ctx.shadowColor = C.moon; ctx.shadowBlur = 8 + 10 * k;
+    ctx.globalAlpha = Math.min(1, k * 1.4);
+    ctx.strokeStyle = C.moon; ctx.lineWidth = 1.8;
+    ctx.beginPath(); ctx.ellipse(0, 0, r * 0.45, r, 0, 0, Math.PI * 2); ctx.stroke();
+    for (let i = 0; i < 6; i++) {
+      const a = p.spin + i * Math.PI / 3, cx = Math.cos(a) * r * 0.45, cy = Math.sin(a) * r;
+      ctx.beginPath(); ctx.arc(cx, cy, 1.6, 0, Math.PI * 2); ctx.fillStyle = C.moonCore; ctx.fill();
+    }
+    ctx.beginPath(); ctx.ellipse(-1, 0, r * 0.28, r * 0.62, 0, 0, Math.PI * 2); ctx.ellipse(1.5, -1.5, r * 0.22, r * 0.5, 0, 0, Math.PI * 2, true);
+    ctx.fillStyle = C.moon; ctx.fill('evenodd');
     ctx.restore();
   }
 
@@ -199,6 +228,7 @@
     shield(ctx, p);
     mane(ctx);
     head(ctx, p);
+    hexHand(ctx, p);
     spear(ctx, p);
     ctx.restore();
     ctx.restore();
@@ -274,11 +304,11 @@
       [0.6, { staff: Math.PI, staffLift: -4.5, staffReach: -0.8, legFront: -0.5, legBack: 0.4, wingOpen: 0.7, wingBack: -0.5, wingFront: -0.5, head: 0.1 }],
       [1, { staff: Math.PI - 0.1, staffLift: 1, staffReach: -0.6, wingOpen: 0.4 }],
     ]) },
-    cast: { fps: 14, loop: false, frames: keys(7, [
-      [0, { squash: 0.4, shieldUp: 0.2, wingOpen: 0.2, orb: 1 }],
-      [0.4, { squash: -0.2, bob: -4, shieldUp: 1.2, wingOpen: 1.1, wingBack: -0.5, wingFront: -0.55, antenna: 0.45, orb: 3, head: -0.08, staff: -0.25 }],
-      [0.7, { squash: -0.15, bob: -3, shieldUp: 1.1, wingOpen: 1, wingBack: -0.45, wingFront: -0.5, antenna: 0.4, orb: 2.6, head: -0.06, staff: -0.2 }],
-      [1, { orb: 1 }],
+    cast: { fps: 14, loop: false, frames: keys(8, [
+      [0, { squash: 0.4, shieldBack: 0.4, wingOpen: 0.2, hex: 0.15, staff: 0.15, staffReach: 0.3 }],
+      [0.3, { squash: -0.15, bob: -3, shieldBack: 1, hex: 0.85, spin: 1.2, wingOpen: 0.9, wingBack: -0.4, wingFront: -0.45, antenna: 0.35, orb: 2.2, staff: 0.3, staffReach: 0.6, tilt: 0.08 }],
+      [0.65, { squash: -0.2, bob: -4, shieldBack: 1, hex: 1, spin: 2.6, wingOpen: 1.1, wingBack: -0.5, wingFront: -0.55, antenna: 0.45, orb: 3, staff: 0.3, staffReach: 0.6, tilt: 0.12 }],
+      [1, { shieldBack: 0.2, hex: 0, spin: 3.4, orb: 1, staffReach: 0.2 }],
     ]) },
     hurt: { fps: 14, loop: false, frames: keys(4, [
       [0, { flash: 0.85, tilt: -0.3, dx: -6, bob: -3, head: 0.15, antenna: 0.6, legFront: -0.5, legBack: 0.4, staff: -0.4, wingOpen: 0.6 }],
