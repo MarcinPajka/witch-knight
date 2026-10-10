@@ -35,6 +35,9 @@
     <Reference Include="UnityEngine.CoreModule" HintPath="$(HollowKnightRefs)/UnityEngine.CoreModule.dll" Private="false" />
     <Reference Include="UnityEngine.ImageConversionModule" HintPath="$(HollowKnightRefs)/UnityEngine.ImageConversionModule.dll" Private="false" />
     <Reference Include="UnityEngine.Physics2DModule" HintPath="$(HollowKnightRefs)/UnityEngine.Physics2DModule.dll" Private="false" />
+    <Reference Include="UnityEngine.IMGUIModule" HintPath="$(HollowKnightRefs)/UnityEngine.IMGUIModule.dll" Private="false" />
+    <Reference Include="UnityEngine.InputLegacyModule" HintPath="$(HollowKnightRefs)/UnityEngine.InputLegacyModule.dll" Private="false" />
+    <Reference Include="UnityEngine.TextRenderingModule" HintPath="$(HollowKnightRefs)/UnityEngine.TextRenderingModule.dll" Private="false" />
     <Reference Include="InControl" HintPath="$(HollowKnightRefs)/InControl.dll" Private="false" />
     <Reference Include="Newtonsoft.Json" HintPath="$(HollowKnightRefs)/Newtonsoft.Json.dll" Private="false" />
   </ItemGroup>

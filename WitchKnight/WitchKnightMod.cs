@@ -18,6 +18,8 @@ namespace WitchKnight
             Instance = this;
             ModHooks.HeroUpdateHook += OnHeroUpdate;
             Moveset.Hook();
+            Favours.Hook();
+            Barks.Hook();
             Log("The moth witch stirs.");
         }
 

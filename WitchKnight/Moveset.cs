@@ -71,7 +71,7 @@ namespace WitchKnight
             }
 
             moonlightTimer += Time.deltaTime;
-            if (moonlightTimer < MoonlightInterval) return;
+            if (moonlightTimer < MoonlightInterval / Favours.MoonlightRate) return;
             moonlightTimer = 0f;
 
             hero.AddMPCharge(MoonlightPerTick);
@@ -85,9 +85,10 @@ namespace WitchKnight
             if (!InputHandler.Instance.inputActions.jump.IsPressed) return;
 
             var body = hero.GetComponent<Rigidbody2D>();
-            if (body.velocity.y < -GlideFallSpeed)
+            var cap = Favours.GlideFallSpeed(GlideFallSpeed);
+            if (body.velocity.y < -cap)
             {
-                body.velocity = new Vector2(body.velocity.x, -GlideFallSpeed);
+                body.velocity = new Vector2(body.velocity.x, -cap);
             }
         }
     }
