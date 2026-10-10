@@ -5,8 +5,13 @@ namespace WitchKnight
     /// <summary>
     /// Entry point loaded by the Hollow Knight Modding API.
     /// </summary>
-    public class WitchKnightMod : Mod
+    public class WitchKnightMod : Mod, IGlobalSettings<GlobalSettings>
     {
+        public static GlobalSettings Settings { get; private set; } = new();
+
+        public void OnLoadGlobal(GlobalSettings s) => Settings = s;
+        public GlobalSettings OnSaveGlobal() => Settings;
+
         internal static WitchKnightMod? Instance { get; private set; }
 
         public WitchKnightMod() : base("Witch Knight") { }
@@ -17,11 +22,15 @@ namespace WitchKnight
         {
             Instance = this;
             ModHooks.HeroUpdateHook += OnHeroUpdate;
+            Moveset.Hook();
+            Favours.Hook();
+            Barks.Hook();
+            Hex.Hook();
+            Bestiary.Hook();
             Log("The moth witch stirs.");
         }
 
-        // Swap the Knight for Hex Moth as soon as the hero exists. Later M1 systems
-        // (Moonlight meter, wing-dash, spear moveset) hook in here too.
+        // Swap the Knight for Hex Moth as soon as the hero exists. The moveset lives in Moveset.
         private void OnHeroUpdate()
         {
             var hero = HeroController.instance;

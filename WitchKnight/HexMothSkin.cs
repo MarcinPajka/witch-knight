@@ -67,6 +67,7 @@ namespace WitchKnight
         private string Choose()
         {
             if (hero.cState.dead) return "death";
+            if (Parry.ShowPose) return "block";
 
             string clip = knightAnimator.CurrentClip?.name ?? "";
             if (clip.Contains("Death")) return "death";

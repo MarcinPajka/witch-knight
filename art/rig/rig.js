@@ -321,6 +321,11 @@
       [0.65, { squash: -0.2, bob: -4, shieldBack: 1, hex: 1, spin: 2.6, wingOpen: 1.1, wingBack: -0.5, wingFront: -0.55, antenna: 0.45, orb: 3, staff: 0.3, staffReach: 0.6, tilt: 0.12 }],
       [1, { shieldBack: 0.2, hex: 0, spin: 3.4, orb: 1, staffReach: 0.2 }],
     ]) },
+    block: { fps: 16, loop: false, frames: keys(5, [
+      [0, { shieldUp: 0.4, tilt: -0.05, legFront: 0.3, legBack: -0.3, staff: 1.2, staffReach: -1.2 }],
+      [0.3, { shieldUp: 1.3, tilt: -0.12, dx: -3, bob: 2, squash: 0.06, legFront: 0.6, legBack: -0.5, staff: 1.1, staffReach: -1.4, antenna: 0.3, wingOpen: 0.2, flash: 0.12 }],
+      [1, { shieldUp: 1.15, tilt: -0.1, dx: -2, bob: 1, squash: 0.04, legFront: 0.5, legBack: -0.45, staff: 1.15, staffReach: -1.3, antenna: 0.2 }],
+    ]) },
     hurt: { fps: 14, loop: false, frames: keys(4, [
       [0, { flash: 0.85, tilt: -0.3, dx: -6, bob: -3, head: 0.15, antenna: 0.6, legFront: -0.5, legBack: 0.4, staff: -0.4, wingOpen: 0.6 }],
       [0.4, { flash: 0.2, tilt: -0.25, dx: -8, bob: -2, head: 0.12, antenna: 0.5, legFront: -0.4, legBack: 0.3, staff: -0.35, wingOpen: 0.5 }],
