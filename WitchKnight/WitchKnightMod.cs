@@ -20,9 +20,15 @@ namespace WitchKnight
             Log("The moth witch stirs.");
         }
 
-        // Placeholder for M1 systems (Moonlight meter, wing-dash, staff moveset).
+        // Swap the Knight for Hex Moth as soon as the hero exists. Later M1 systems
+        // (Moonlight meter, wing-dash, spear moveset) hook in here too.
         private void OnHeroUpdate()
         {
+            var hero = HeroController.instance;
+            if (hero != null && hero.GetComponent<HexMothSkin>() == null)
+            {
+                hero.gameObject.AddComponent<HexMothSkin>();
+            }
         }
     }
 }
