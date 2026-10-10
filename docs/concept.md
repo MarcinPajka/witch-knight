@@ -76,3 +76,52 @@ Each milestone is a public GitHub release.
 ## 7. Room flow in a run
 
 Each region is about 8 to 12 rooms long. After clearing a room, the player picks the next door, and each door shows its reward (a Favour, Moonstones, healing, a shop or a mini-boss). Each region ends in a boss, and a full run is 4 regions.
+
+## 8. Bestiary: Hallownest reborn as Greek myth
+
+Every Hollow Knight creature becomes a creature or figure from Greek myth. The myths are public domain, so we use our own designs and never Supergiant's versions. Each reskinned creature keeps its Hollow Knight movement and attack pattern as a base, then gets one new move that fits its myth.
+
+### Common enemies
+
+| Hollow Knight | Witch Knight | New twist |
+|---|---|---|
+| Wandering Husk, Husk Hornhead | **Hoplite Husk**: a bug in a bronze helmet with a spear | Raises its shield and blocks frontal hits until it attacks |
+| Husk Guard, Husk Sentry | **Phalanx Guard** | Fights in pairs, locking shields side by side |
+| Great Husk Sentry | **Spartan Champion** | Throws its spear across the room |
+| Vengefly | **Harpy Fly** | Steals a dropped Moonstone and flees |
+| Gruzzer | **Stymphalian Chick** | Sheds bronze feathers when hit |
+| Aspid Hunter, Primal Aspid | **Hydra Hatchling** | Grows a second head and fires twice if not killed quickly |
+| Crawlid, Tiktik | **Bronze Crawler**: a tiny wind-up automaton | Explodes into gears on death |
+| Mosscreep, Mosskin | **Dryad Sprout** | Roots the heroine briefly on contact |
+| Mistake, Folly | **Shade** | Passes through walls |
+| Crystal Hunter, Crystal Crawler | **Cyclops Miner** | Fires a single-eye beam |
+| Deepnest spiders, Weavers | **Arachne's Brood** | Leaves webs that slow her |
+| Hiveling, Hive Soldier | **Melissae**: bee nymphs | Heal each other with honey |
+
+### Bosses
+
+| Hollow Knight | Witch Knight | New twist |
+|---|---|---|
+| False Knight | **The Minotaur**: a maggot in a bull-skull helmet with a double axe | Charges horns-first, and the arena becomes a short labyrinth in phase 2 |
+| Gruz Mother | **Stymphalian Mother** | Her bronze feathers rain from the ceiling |
+| Brooding Mawlek | **Chimera**: lion, goat and serpent heads | Each head has its own attack, and the goat head heals the others |
+| Hornet (Greenpath) | **The Amazon** | Throws a chakram-like bronze disc that returns |
+| Mantis Lords | **The Gorgon Sisters**: three sisters | Petrifying gaze, so she must look away by facing the other direction |
+| Soul Master | **The Fallen Oracle of Delphi** | Teleports between prophecy circles that mark where the next attack lands |
+| Dung Defender | **The Augean Keeper**, from Heracles' labours | Rolls dung boulders, and a river channel floods the arena |
+| Broken Vessel | **The Hydra** | Cut heads regrow as two unless burned with a Moonlight spell |
+| Crystal Guardian | **Talos**: the bronze giant | Sweeps a heat-ray, and is weak at his ankle |
+| Watcher Knights | **Argus Hundred-Eyes** | A group fight where each knight carries one of Argus's eyes |
+| Uumuu | **Scylla** | Grabs with tentacles from the fog lake |
+| Nosk | **Empusa**: the shapeshifter | Mimics the heroine's silhouette before attacking |
+| Hive Knight | **The Hive Warden of the Melissae** | Summons bee nymphs between charges |
+| Traitor Lord | **Lycaon**: a wolf-cursed king | Lunges, and calls a howling shockwave |
+| The Hollow Knight, Radiance | **The Moon-Thief** (original final antagonist) | Built last, in M4 |
+
+### How a reskin is built
+
+1. **Art:** a rig in the same style as the heroine, exported to sprite sheets.
+2. **Swap:** at runtime the mod hides the original sprite and plays our frames, timed to the enemy's existing animation clips.
+3. **Twist:** a small change to the enemy's PlayMaker behaviour, or a Witch Knight component added to it.
+
+Order: the Descent route first, in this order: Hoplite Husk, Harpy Fly, Bronze Crawler, then the Minotaur as the first boss.
