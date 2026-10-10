@@ -8,11 +8,12 @@
   };
 
   // Frame size in pixels; the origin sits between the feet.
-  const FRAME = { w: 160, h: 200, originX: 76, originY: 190 };
+  const FRAME = { w: 320, h: 320, originX: 150, originY: 230 };
 
   const BASE = {
     bob: 0, tilt: 0, legBack: 0, legFront: 0, wingBack: 0, wingFront: 0,
-    wingOpen: 0, staff: 0, staffReach: 0, antenna: 0, head: 0, orb: 1, squash: 0,
+    wingOpen: 0, staff: 0, staffReach: 0, staffLift: 0, antenna: 0, head: 0, orb: 1, squash: 0,
+    rot: 0, dx: 0, alpha: 1, shieldUp: 0, flash: 0,
   };
 
   function bronzeFill(ctx, x0, y0, x1, y1) {
@@ -141,7 +142,8 @@
   // Hoplite aspis on the far arm, held across the body.
   function shield(ctx, p) {
     ctx.save();
-    ctx.translate(4, -62);
+    ctx.translate(4 + p.shieldUp * 8, -62 - p.shieldUp * 14);
+    ctx.rotate(p.shieldUp * 0.2);
     ctx.beginPath(); ctx.arc(0, 0, 24, 0, Math.PI * 2);
     ctx.fillStyle = bronzeFill(ctx, -24, -24, 24, 24); ctx.fill(); outline(ctx, 1.8);
     ctx.beginPath(); ctx.arc(0, 0, 19, 0, Math.PI * 2); ctx.strokeStyle = C.bronzeDark; ctx.lineWidth = 2; ctx.stroke();
@@ -155,7 +157,7 @@
 
   function spear(ctx, p) {
     ctx.save();
-    ctx.translate(30 + p.staffReach * 10, -54);
+    ctx.translate(46 + p.staffReach * 10, -54 - p.staffLift * 10);
     ctx.rotate(p.staff);
     // shaft with a bronze butt-spike
     ctx.strokeStyle = C.wood; ctx.lineWidth = 3.5; ctx.lineCap = 'round';
@@ -177,7 +179,9 @@
   function draw(ctx, pose) {
     const p = Object.assign({}, BASE, pose);
     ctx.save();
-    ctx.translate(FRAME.originX, FRAME.originY + p.bob);
+    ctx.globalAlpha = p.alpha;
+    ctx.translate(FRAME.originX + p.dx, FRAME.originY + p.bob);
+    ctx.rotate(p.rot);
     ctx.scale(1 + p.squash * 0.08, 1 - p.squash * 0.1);
     ctx.save();
     ctx.translate(0, 0);
@@ -198,11 +202,31 @@
     spear(ctx, p);
     ctx.restore();
     ctx.restore();
+    if (p.flash > 0) {
+      // white hit flash over the whole figure
+      ctx.save(); ctx.globalCompositeOperation = 'source-atop'; ctx.fillStyle = `rgba(255,255,255,${p.flash})`;
+      ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height); ctx.restore();
+    }
   }
 
   // Animations: name -> { fps, loop, frames: pose[] }
   const TAU = Math.PI * 2;
   function cycle(n, fn) { return Array.from({ length: n }, (_, i) => fn(i / n * TAU, i)); }
+
+  // Linear keyframes: keys = [[time 0..1, pose], ...] sampled into n frames.
+  function keys(n, ks) {
+    return Array.from({ length: n }, (_, i) => {
+      const t = n === 1 ? 0 : i / (n - 1);
+      let j = 0; while (j < ks.length - 2 && t > ks[j + 1][0]) j++;
+      const [t0, a] = ks[j], [t1, b] = ks[j + 1], u = Math.min(1, Math.max(0, (t - t0) / (t1 - t0 || 1)));
+      const out = {};
+      for (const k of new Set([...Object.keys(a), ...Object.keys(b)])) {
+        const va = k in a ? a[k] : BASE[k], vb = k in b ? b[k] : BASE[k];
+        out[k] = va + (vb - va) * u;
+      }
+      return out;
+    });
+  }
 
   const ANIMS = {
     idle: { fps: 8, loop: true, frames: cycle(8, t => ({
@@ -214,6 +238,59 @@
       wingBack: 0.35 + Math.sin(t * 2) * 0.06, wingFront: 0.3 + Math.sin(t * 2 + 1) * 0.06,
       antenna: -0.25 + Math.sin(t * 2) * 0.06, staff: 0.35, staffReach: 0.2, head: -0.04, orb: 0.8,
     })) },
+    jump: { fps: 12, loop: false, frames: keys(4, [
+      [0, { squash: 0.6, legFront: 0.3, legBack: -0.3, wingOpen: 0.2 }],
+      [0.4, { squash: -0.4, bob: -6, legFront: -0.5, legBack: 0.6, wingOpen: 0.6, wingBack: -0.2, wingFront: -0.25, antenna: 0.2, staff: -0.15 }],
+      [1, { squash: -0.2, bob: -6, legFront: -0.4, legBack: 0.5, wingOpen: 0.4, wingBack: -0.1, wingFront: -0.15, antenna: 0.25, staff: -0.1 }],
+    ]) },
+    fall: { fps: 10, loop: true, frames: cycle(4, t => ({
+      bob: -4, legFront: 0.35 + Math.sin(t) * 0.05, legBack: -0.2, wingOpen: 0.9 + Math.sin(t) * 0.1,
+      wingBack: -0.5 + Math.sin(t) * 0.08, wingFront: -0.45 + Math.sin(t + 0.6) * 0.08, antenna: -0.3, staff: 0.15, tilt: -0.04,
+    })) },
+    land: { fps: 16, loop: false, frames: keys(3, [
+      [0, { squash: 0.9, legFront: 0.2, legBack: -0.2, wingOpen: 0.5, wingBack: -0.3, antenna: -0.3 }],
+      [1, { squash: 0, antenna: 0.05 }],
+    ]) },
+    dash: { fps: 18, loop: false, frames: keys(5, [
+      [0, { tilt: 0.35, bob: -4, wingOpen: 1, wingBack: 0.9, wingFront: 0.9, legFront: -0.9, legBack: -1.1, staff: 1.2, staffReach: 0.4, antenna: -0.6, squash: -0.3 }],
+      [0.6, { tilt: 0.4, bob: -4, wingOpen: 1, wingBack: 1.1, wingFront: 1.05, legFront: -1, legBack: -1.2, staff: 1.3, staffReach: 0.5, antenna: -0.7, squash: -0.35 }],
+      [1, { tilt: 0.15, wingOpen: 0.3, wingBack: 0.3, wingFront: 0.3, legFront: -0.3, legBack: -0.3, staff: 0.6, antenna: -0.2 }],
+    ]) },
+    attack: { fps: 20, loop: false, frames: keys(6, [
+      [0, { tilt: -0.05, staff: 1.4, staffReach: -1.2, legFront: 0.3, legBack: -0.3, shieldUp: 0.3 }],
+      [0.35, { tilt: 0.15, staff: Math.PI / 2, staffReach: 3.2, legFront: 0.6, legBack: -0.5, wingBack: 0.2, antenna: -0.3, shieldUp: 0.1 }],
+      [0.6, { tilt: 0.12, staff: Math.PI / 2, staffReach: 3, legFront: 0.5, legBack: -0.4, wingBack: 0.2, antenna: -0.25 }],
+      [1, { staff: 0.3, staffReach: 0.2 }],
+    ]) },
+    attackUp: { fps: 20, loop: false, frames: keys(6, [
+      [0, { staff: -0.1, staffLift: -1.5, squash: 0.3 }],
+      [0.35, { staff: -0.05, staffLift: 6, staffReach: -0.6, bob: -3, squash: -0.3, head: -0.12, antenna: 0.35, wingOpen: 0.3 }],
+      [0.6, { staff: -0.05, staffLift: 5.6, staffReach: -0.6, bob: -2, head: -0.1, antenna: 0.3 }],
+      [1, { staff: 0.02 }],
+    ]) },
+    attackDown: { fps: 20, loop: false, frames: keys(6, [
+      [0, { staff: Math.PI - 0.2, staffLift: 2, staffReach: -0.6, legFront: -0.4, legBack: 0.4, wingOpen: 0.5, wingBack: -0.4, wingFront: -0.4 }],
+      [0.35, { staff: Math.PI, staffLift: -4.8, staffReach: -0.8, legFront: -0.6, legBack: 0.5, wingOpen: 0.8, wingBack: -0.6, wingFront: -0.6, head: 0.12 }],
+      [0.6, { staff: Math.PI, staffLift: -4.5, staffReach: -0.8, legFront: -0.5, legBack: 0.4, wingOpen: 0.7, wingBack: -0.5, wingFront: -0.5, head: 0.1 }],
+      [1, { staff: Math.PI - 0.1, staffLift: 1, staffReach: -0.6, wingOpen: 0.4 }],
+    ]) },
+    cast: { fps: 14, loop: false, frames: keys(7, [
+      [0, { squash: 0.4, shieldUp: 0.2, wingOpen: 0.2, orb: 1 }],
+      [0.4, { squash: -0.2, bob: -4, shieldUp: 1.2, wingOpen: 1.1, wingBack: -0.5, wingFront: -0.55, antenna: 0.45, orb: 3, head: -0.08, staff: -0.25 }],
+      [0.7, { squash: -0.15, bob: -3, shieldUp: 1.1, wingOpen: 1, wingBack: -0.45, wingFront: -0.5, antenna: 0.4, orb: 2.6, head: -0.06, staff: -0.2 }],
+      [1, { orb: 1 }],
+    ]) },
+    hurt: { fps: 14, loop: false, frames: keys(4, [
+      [0, { flash: 0.85, tilt: -0.3, dx: -6, bob: -3, head: 0.15, antenna: 0.6, legFront: -0.5, legBack: 0.4, staff: -0.4, wingOpen: 0.6 }],
+      [0.4, { flash: 0.2, tilt: -0.25, dx: -8, bob: -2, head: 0.12, antenna: 0.5, legFront: -0.4, legBack: 0.3, staff: -0.35, wingOpen: 0.5 }],
+      [1, { tilt: -0.05, dx: -2 }],
+    ]) },
+    death: { fps: 10, loop: false, frames: keys(10, [
+      [0, { flash: 0.8, tilt: -0.2, head: 0.2, antenna: 0.6, staff: -0.4 }],
+      [0.3, { rot: -0.6, dx: 10, bob: -2, antenna: 0.8, staff: -0.9, wingOpen: 0.7, legFront: -0.6, legBack: 0.5 }],
+      [0.6, { rot: -1.3, dx: 40, bob: -6, antenna: 1, staff: -1.4, wingOpen: 1, wingBack: -0.6, wingFront: -0.6, legFront: -0.3, legBack: 0.3, orb: 0.3 }],
+      [1, { rot: -1.35, dx: 40, bob: -6, antenna: 1.1, staff: -1.45, wingOpen: 1.1, wingBack: -0.7, wingFront: -0.7, orb: 0, alpha: 0.35 }],
+    ]) },
   };
 
   root.HexMoth = { draw, FRAME, ANIMS, COLORS: C };
