@@ -32,7 +32,7 @@
 | Boons from Olympians | **Favours** from five original patrons, offered in rooms, stacking per run | New system |
 | Arcana cards | **Arcana charms**: permanent passive cards, equipped with a point budget | Charms and notches |
 | Incantations at the cauldron | **Rites** at a base camp, unlocking permanent world changes | Shops and NPC upgrades |
-| Run-based structure | **Descents**: rooms drawn from Hallownest areas, ending in a boss; death returns you to camp | Persistent map |
+| Run-based structure | **Runs** on two routes (see below); death returns you to camp | Persistent map (removed) |
 | Hexes (Selene) | **Moon Hexes**: one ultimate spell per run, charged by spending Moonlight | Desolate Dive / Howling Wraiths slots |
 
 ### Original patrons (instead of Olympians)
@@ -48,9 +48,10 @@ Each patron has a theme, a colour and a set of Favours:
 ## 4. Scope by milestone
 
 1. **M1, playable heroine:** a custom skin, Moonlight in place of Soul, the Staff only (Attack, Special, Omega), and the wing-dash.
-2. **M2, run loop:** the base camp, Descents built from existing Hollow Knight rooms, Favours from 2 patrons, death returning to camp.
-3. **M3, full arsenal:** all six witch-tools, all five patrons, Arcana charms, Hex Circle and Moon Hexes.
-4. **M4, content:** reworked bosses, a final antagonist, original areas, and Rites.
+2. **M2, run loop:** the base camp, the Descent route built from existing Hollow Knight rooms, Favours from 2 patrons, death returning to camp.
+3. **M2.5, second route:** the Ascent route, with its own bosses and a surface-only threat.
+4. **M3, full arsenal:** all six witch-tools, all five patrons, Arcana charms, Hex Circle and Moon Hexes.
+5. **M4, content:** reworked bosses, a final antagonist, original areas, and Rites.
 
 Each milestone is a public GitHub release.
 
@@ -62,7 +63,16 @@ Each milestone is a public GitHub release.
 - **Mod installers for players:** Lumafly or Scarab, through the community mod list once stable.
 - **Build:** GitHub Actions builds the DLL against reference assemblies and attaches it to releases.
 
-## 6. Open questions
+## 6. Decisions
 
-- Should the persistent Hollow Knight map stay available as a "story mode" next to the Descent mode?
-- Is controller support required from M1?- Should the heroine get voice or text barks? (Text only for now keeps the scope down.)
+- **Runs only.** There is no open-world story mode. The game is run-based, like Hades, and the persistent Hollow Knight map is not playable on its own.
+- **Two routes from camp.** Each run, the heroine picks a route:
+  - **Descent (down):** from Dirtmouth through the Crossroads, Greenpath, Fungal Wastes and Deepnest to the Abyss.
+  - **Ascent (up):** from the Crystal Peak mines through the City of Tears rooftops to the Howling Cliffs and the Hive's peak.
+  Each route has its own room pools, bosses and Favour odds. Rooms are cut from the existing Hollow Knight areas.
+- **Keyboard only.** No controller support is planned.
+- **Text barks only.** The heroine and NPCs speak through short text lines. There is no voice acting.
+
+## 7. Room flow in a run
+
+Each region is about 8 to 12 rooms long. After clearing a room, the player picks the next door, and each door shows its reward (a Favour, Moonstones, healing, a shop or a mini-boss). Each region ends in a boss, and a full run is 4 regions.

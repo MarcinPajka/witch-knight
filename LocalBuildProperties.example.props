@@ -1,0 +1,9 @@
+<Project>
+  <!-- Copy to LocalBuildProperties.props (git-ignored) and edit the paths for your machine. -->
+  <PropertyGroup>
+    <!-- Steam on Windows: -->
+    <HollowKnightRefs>C:\Program Files (x86)\Steam\steamapps\common\Hollow Knight\hollow_knight_Data\Managed</HollowKnightRefs>
+    <!-- Remove this line if you don't want builds copied into the game automatically. -->
+    <ModsDir>$(HollowKnightRefs)\Mods</ModsDir>
+  </PropertyGroup>
+</Project>
