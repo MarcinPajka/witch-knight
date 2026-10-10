@@ -27,6 +27,7 @@ namespace WitchKnight
             Barks.Hook();
             Hex.Hook();
             Bestiary.Hook();
+            RunLoop.Hook();
             BossTwists.Hook();
             Log("The moth witch stirs.");
         }
