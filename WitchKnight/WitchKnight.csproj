@@ -44,6 +44,7 @@
 
   <ItemGroup>
     <EmbeddedResource Include="Resources/Sprites/*.png;Resources/Sprites/anims.json" LogicalName="WitchKnight.Resources.Sprites.%(Filename)%(Extension)" />
+    <EmbeddedResource Include="Resources/Enemies/*.png;Resources/Enemies/enemies.json" LogicalName="WitchKnight.Resources.Enemies.%(Filename)%(Extension)" />
   </ItemGroup>
 
   <!-- Optional: copy the built mod straight into your game's Mods folder. -->

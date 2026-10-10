@@ -1,0 +1,180 @@
+{
+  "hopliteHusk": {
+    "frame": {
+      "w": 600,
+      "h": 520,
+      "pivotX": 280,
+      "pivotY": 464
+    },
+    "figure": 380,
+    "anchor": "feet",
+    "anims": {
+      "idle": {
+        "fps": 7,
+        "loop": true,
+        "frames": 6
+      },
+      "walk": {
+        "fps": 10,
+        "loop": true,
+        "frames": 8
+      },
+      "run": {
+        "fps": 14,
+        "loop": true,
+        "frames": 8
+      },
+      "attackAntic": {
+        "fps": 10,
+        "loop": false,
+        "frames": 4
+      },
+      "attack": {
+        "fps": 16,
+        "loop": false,
+        "frames": 5
+      },
+      "hurt": {
+        "fps": 14,
+        "loop": false,
+        "frames": 3
+      },
+      "death": {
+        "fps": 12,
+        "loop": false,
+        "frames": 10
+      }
+    }
+  },
+  "harpyFly": {
+    "frame": {
+      "w": 440,
+      "h": 400,
+      "pivotX": 208,
+      "pivotY": 208
+    },
+    "figure": 240,
+    "anchor": "center",
+    "anims": {
+      "fly": {
+        "fps": 14,
+        "loop": true,
+        "frames": 6
+      },
+      "attack": {
+        "fps": 16,
+        "loop": true,
+        "frames": 4
+      },
+      "hurt": {
+        "fps": 14,
+        "loop": false,
+        "frames": 3
+      },
+      "death": {
+        "fps": 12,
+        "loop": false,
+        "frames": 9
+      }
+    }
+  },
+  "bronzeCrawler": {
+    "frame": {
+      "w": 400,
+      "h": 300,
+      "pivotX": 192,
+      "pivotY": 256
+    },
+    "figure": 148,
+    "anchor": "feet",
+    "anims": {
+      "walk": {
+        "fps": 12,
+        "loop": true,
+        "frames": 8
+      },
+      "hurt": {
+        "fps": 14,
+        "loop": false,
+        "frames": 3
+      },
+      "death": {
+        "fps": 14,
+        "loop": false,
+        "frames": 10
+      }
+    }
+  },
+  "minotaur": {
+    "frame": {
+      "w": 690,
+      "h": 660,
+      "pivotX": 315,
+      "pivotY": 615
+    },
+    "figure": 570,
+    "anchor": "feet",
+    "anims": {
+      "idle": {
+        "fps": 6,
+        "loop": true,
+        "frames": 6
+      },
+      "run": {
+        "fps": 12,
+        "loop": true,
+        "frames": 8
+      },
+      "jumpAntic": {
+        "fps": 12,
+        "loop": false,
+        "frames": 3
+      },
+      "jump": {
+        "fps": 10,
+        "loop": false,
+        "frames": 3
+      },
+      "land": {
+        "fps": 14,
+        "loop": false,
+        "frames": 3
+      },
+      "attackAntic": {
+        "fps": 10,
+        "loop": false,
+        "frames": 5
+      },
+      "attack": {
+        "fps": 18,
+        "loop": false,
+        "frames": 5
+      },
+      "attackRecover": {
+        "fps": 10,
+        "loop": false,
+        "frames": 4
+      },
+      "roar": {
+        "fps": 12,
+        "loop": true,
+        "frames": 4
+      },
+      "stun": {
+        "fps": 8,
+        "loop": true,
+        "frames": 6
+      },
+      "hurt": {
+        "fps": 14,
+        "loop": false,
+        "frames": 3
+      },
+      "death": {
+        "fps": 10,
+        "loop": false,
+        "frames": 12
+      }
+    }
+  }
+}

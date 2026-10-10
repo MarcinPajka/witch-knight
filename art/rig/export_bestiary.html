@@ -1,0 +1,20 @@
+<!doctype html><meta charset="utf-8">
+<script src="bestiary.js"></script>
+<pre id="out"></pre>
+<script>
+// Renders every creature's animations into horizontal sprite sheets and prints them as data URLs.
+const out = {};
+for (const cr of Bestiary.creatures) {
+  const S = cr.scale, F = cr.FRAME, anims = {};
+  for (const [name, anim] of Object.entries(cr.ANIMS)) {
+    const c = document.createElement('canvas');
+    c.width = Math.ceil(F.w * S) * anim.frames.length; c.height = Math.ceil(F.h * S);
+    const ctx = c.getContext('2d');
+    anim.frames.forEach((pose, i) => { ctx.save(); ctx.translate(Math.ceil(F.w * S) * i, 0); ctx.scale(S, S); cr.draw(ctx, pose); ctx.restore(); });
+    anims[name] = { fps: anim.fps, loop: anim.loop, frames: anim.frames.length, png: c.toDataURL('image/png') };
+  }
+  out[cr.key] = { frame: { w: Math.ceil(F.w * S), h: Math.ceil(F.h * S), pivotX: F.originX * S, pivotY: F.originY * S },
+    figure: cr.figure * S, anchor: cr.anchor, anims };
+}
+document.getElementById('out').textContent = JSON.stringify(out);
+</script>
