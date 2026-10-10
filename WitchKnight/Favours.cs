@@ -86,15 +86,44 @@ namespace WitchKnight
 
         public static void Hook()
         {
-            ModHooks.RecordKillForJournalHook += (_, _, _, _, _) => OnKill();
+            ModHooks.RecordKillForJournalHook += (_, name, _, _, _) => OnKill(name);
             ModHooks.HitInstanceHook += OnHit;
             ModHooks.AfterTakeDamageHook += OnTakeDamage;
             ModHooks.AfterPlayerDeadHook += OnDeath;
             ModHooks.HeroUpdateHook += OnHeroUpdate;
         }
 
-        private static void OnKill()
+        // Journal names of the bosses. Felling one brings a Heroic offer at once.
+        private static readonly HashSet<string> bosses = new()
         {
+            "FalseKnight", "Hornet1", "Hornet2", "MegaMossCharger", "MantisLord", "MageLord",
+            "BlackKnight", "DungDefender", "MegaJellyfish", "Mawlek", "FlukeMother", "BigBuzzer",
+            "HiveKnight", "Lurker", "TraitorLord", "Grimm", "MimicSpider", "WhiteDefender",
+            "Oblobble", "GreyPrince", "Zote", "Collector", "Hollow Knight", "HollowKnight",
+        };
+
+        private static float lastKill = -999f;
+        private static int streak;
+
+        private static void OnKill(string name)
+        {
+            // Kill streaks: quick kills chain, and every third one returns some Moonlight.
+            streak = Time.time - lastKill < 3f ? streak + 1 : 1;
+            lastKill = Time.time;
+            if (streak >= 3 && streak % 3 == 0)
+            {
+                HeroController.instance?.AddMPCharge(11);
+                GameCameras.instance?.soulOrbFSM?.SendEvent("MP GAIN");
+                Barks.Say("Hex Moth", streak >= 6 ? $"{streak} in a row! The moon sings!" : "Three! Keep the rhythm.", Barks.MothColour);
+            }
+
+            if (Offer == null && name != null && bosses.Contains(name))
+            {
+                Barks.Say("The patrons", "A champion falls. Take a Heroic Favour.", new Color(1f, 0.8f, 0.4f));
+                MakeOffer(heroic: true);
+                return;
+            }
+
             var bloom = Level(Patron.LastBloom);
             var hero = HeroController.instance;
             if (bloom > 0 && hero != null && Random.value < Mathf.Min(0.12f * bloom, 0.6f)
@@ -114,13 +143,13 @@ namespace WitchKnight
             MakeOffer();
         }
 
-        private static void MakeOffer()
+        private static void MakeOffer(bool heroic = false)
         {
             var open = System.Enum.GetValues(typeof(Patron)).Cast<Patron>().Where(p => Level(p) < MaxLevel).ToList();
             if (open.Count == 0) return;
 
             Offer = open.OrderBy(_ => rng.Next()).Take(3).ToList();
-            OfferRarity = Offer.Select(p => Mathf.Min(RollRarity(), MaxLevel - Level(p))).ToList();
+            OfferRarity = Offer.Select(p => Mathf.Min(heroic ? 3 : RollRarity(), MaxLevel - Level(p))).ToList();
             Barks.Say("Hex Moth", RerollUsed ? "The patrons are watching. Choose: 1, 2 or 3." : "The patrons are watching. Choose 1, 2 or 3, or R to redraw.", Barks.MothColour);
         }
 
