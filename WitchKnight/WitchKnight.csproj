@@ -33,6 +33,13 @@
     <Reference Include="PlayMaker" HintPath="$(HollowKnightRefs)/PlayMaker.dll" Private="false" />
     <Reference Include="UnityEngine" HintPath="$(HollowKnightRefs)/UnityEngine.dll" Private="false" />
     <Reference Include="UnityEngine.CoreModule" HintPath="$(HollowKnightRefs)/UnityEngine.CoreModule.dll" Private="false" />
+    <Reference Include="UnityEngine.ImageConversionModule" HintPath="$(HollowKnightRefs)/UnityEngine.ImageConversionModule.dll" Private="false" />
+    <Reference Include="UnityEngine.Physics2DModule" HintPath="$(HollowKnightRefs)/UnityEngine.Physics2DModule.dll" Private="false" />
+    <Reference Include="Newtonsoft.Json" HintPath="$(HollowKnightRefs)/Newtonsoft.Json.dll" Private="false" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Resources/Sprites/*.png;Resources/Sprites/anims.json" LogicalName="WitchKnight.Resources.Sprites.%(Filename)%(Extension)" />
   </ItemGroup>
 
   <!-- Optional: copy the built mod straight into your game's Mods folder. -->

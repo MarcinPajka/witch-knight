@@ -1,0 +1,15 @@
+<!doctype html><meta charset="utf-8">
+<script src="rig.js"></script>
+<pre id="out"></pre>
+<script>
+// Renders every animation into a horizontal sprite sheet at SCALE and prints them as data URLs.
+const SCALE = 2, { FRAME, ANIMS, draw } = HexMoth, out = {};
+for (const [name, anim] of Object.entries(ANIMS)) {
+  const c = document.createElement('canvas');
+  c.width = FRAME.w * SCALE * anim.frames.length; c.height = FRAME.h * SCALE;
+  const ctx = c.getContext('2d');
+  anim.frames.forEach((pose, i) => { ctx.save(); ctx.scale(SCALE, SCALE); ctx.translate(FRAME.w * i, 0); draw(ctx, pose); ctx.restore(); });
+  out[name] = { fps: anim.fps, loop: anim.loop, frames: anim.frames.length, png: c.toDataURL('image/png') };
+}
+document.getElementById('out').textContent = JSON.stringify({ frame: { w: FRAME.w * SCALE, h: FRAME.h * SCALE, pivotX: FRAME.originX * SCALE, pivotY: FRAME.originY * SCALE }, anims: out });
+</script>
