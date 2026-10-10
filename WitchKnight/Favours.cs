@@ -143,8 +143,9 @@ namespace WitchKnight
             MakeOffer();
         }
 
-        private static void MakeOffer(bool heroic = false)
+        public static void MakeOffer(bool heroic = false)
         {
+            if (Offer != null) return;
             var open = System.Enum.GetValues(typeof(Patron)).Cast<Patron>().Where(p => Level(p) < MaxLevel).ToList();
             if (open.Count == 0) return;
 
