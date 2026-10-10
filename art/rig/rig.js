@@ -43,17 +43,28 @@
     ctx.restore();
   }
 
+  // Insect leg: thigh angled forward, a knee joint, a thin shin angled back and a hooked foot claw.
   function leg(ctx, x, angle, squash) {
+    const k = 1 - squash * 0.25;
     ctx.save();
     ctx.translate(x, -38 + squash * 6);
     ctx.rotate(angle);
-    ctx.beginPath();
-    ctx.moveTo(-5, 0); ctx.lineTo(5, 0); ctx.lineTo(4, 30 - squash * 6); ctx.quadraticCurveTo(0, 36 - squash * 6, -4, 30 - squash * 6);
-    ctx.closePath();
-    ctx.fillStyle = C.body; ctx.fill(); outline(ctx, 1.5);
-    // bronze greave
-    ctx.beginPath(); ctx.rect(-4.5, 12, 9, 12 - squash * 4);
-    ctx.fillStyle = bronzeFill(ctx, -4, 12, 4, 24); ctx.fill(); outline(ctx, 1);
+    ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+    const knee = [6, 15 * k], ankle = [-1, 31 * k], toe = [9, 36 * k];
+    // outline pass, then fill pass, so segments read as one limb
+    for (const [w, col] of [[7.5, C.ink], [5, C.body]]) {
+      ctx.strokeStyle = col;
+      ctx.lineWidth = w; ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(...knee); ctx.stroke();
+      ctx.lineWidth = w - 1.5; ctx.beginPath(); ctx.moveTo(...knee); ctx.lineTo(...ankle); ctx.stroke();
+      ctx.lineWidth = w - 2.5; ctx.beginPath(); ctx.moveTo(...ankle); ctx.lineTo(...toe); ctx.stroke();
+    }
+    // claw tips
+    ctx.strokeStyle = C.ink; ctx.lineWidth = 1.6;
+    ctx.beginPath(); ctx.moveTo(toe[0], toe[1]); ctx.lineTo(toe[0] + 3, toe[1] + 2); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(ankle[0], ankle[1]); ctx.lineTo(ankle[0] - 4, ankle[1] + 4); ctx.stroke();
+    // bronze knee guard
+    ctx.beginPath(); ctx.arc(knee[0], knee[1], 3.6, 0, Math.PI * 2);
+    ctx.fillStyle = bronzeFill(ctx, knee[0] - 3, knee[1] - 3, knee[0] + 3, knee[1] + 3); ctx.fill(); outline(ctx, 1);
     ctx.restore();
   }
 
