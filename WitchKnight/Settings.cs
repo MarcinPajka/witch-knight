@@ -15,5 +15,6 @@ namespace WitchKnight
         public bool GreekNames = true;
         public bool RunLoop = true;
         public int RoomsPerRegion = 6;
+        public bool BossTwists = true;
     }
 }
