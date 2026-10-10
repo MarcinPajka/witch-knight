@@ -76,23 +76,42 @@
     ctx.save();
     ctx.translate(6, -120);
     ctx.rotate(p.head);
-    // antennae (far one first, dimmer)
-    ctx.save(); ctx.translate(-4, -26); ctx.globalAlpha = 0.6; antenna(ctx, p.antenna * 0.8 - 0.15, 1); ctx.restore();
-    ctx.save(); ctx.translate(2, -27); antenna(ctx, p.antenna, 1); ctx.restore();
-    // mask
-    ctx.beginPath(); ctx.ellipse(0, 0, 25, 27, 0, 0, Math.PI * 2);
-    ctx.fillStyle = C.pale; ctx.fill(); outline(ctx, 2);
-    // helmet cap with nose guard
+    // mask, mostly hidden by the helmet; shows through the eye slot and face gap
+    ctx.beginPath(); ctx.ellipse(4, 2, 21, 22, 0, 0, Math.PI * 2);
+    ctx.fillStyle = C.pale; ctx.fill();
+    // crest of moth fur, running front to back
     ctx.beginPath();
-    ctx.moveTo(-27, 2);
-    ctx.bezierCurveTo(-30, -30, 24, -36, 27, -6);
-    ctx.lineTo(24, -4); ctx.lineTo(24, 12); ctx.lineTo(19, 12); ctx.lineTo(19, -6);
-    ctx.bezierCurveTo(10, -16, -14, -16, -20, 6);
+    ctx.moveTo(16, -27);
+    ctx.bezierCurveTo(14, -54, -26, -60, -44, -18);
+    ctx.lineTo(-31, -15);
+    ctx.bezierCurveTo(-22, -38, 2, -42, 8, -29);
     ctx.closePath();
-    ctx.fillStyle = bronzeFill(ctx, -20, -30, 20, 10); ctx.fill(); outline(ctx, 1.6);
-    // eye
-    ctx.beginPath(); ctx.ellipse(10, 4, 7, 9, -0.1, 0, Math.PI * 2); ctx.fillStyle = C.ink; ctx.fill();
-    ctx.beginPath(); ctx.arc(12, 1, 1.8, 0, Math.PI * 2); ctx.fillStyle = C.moon; ctx.fill();
+    ctx.fillStyle = C.pale; ctx.fill(); outline(ctx, 1.6);
+    ctx.strokeStyle = C.paleShade; ctx.lineWidth = 1.2;
+    for (const [x0, y0, x1, y1] of [[10, -34, 4, -48], [0, -36, -8, -50], [-10, -34, -20, -46], [-20, -28, -32, -36]]) {
+      ctx.beginPath(); ctx.moveTo(x0, y0); ctx.lineTo(x1, y1); ctx.stroke();
+    }
+    // Corinthian helmet: dome, neck flare, nose guard and cheek guard
+    ctx.beginPath();
+    ctx.moveTo(-31, 22);
+    ctx.bezierCurveTo(-36, 0, -30, -30, 0, -30);
+    ctx.bezierCurveTo(22, -30, 31, -14, 30, -2);
+    ctx.lineTo(29, 15); ctx.lineTo(24, 15); ctx.lineTo(23, 5);
+    ctx.lineTo(16, 7); ctx.lineTo(17, 23);
+    ctx.bezierCurveTo(10, 29, -14, 29, -22, 25);
+    ctx.closePath();
+    ctx.fillStyle = bronzeFill(ctx, -24, -30, 24, 26); ctx.fill(); outline(ctx, 1.8);
+    // brow ridge and cheek line
+    ctx.strokeStyle = C.bronzeDark; ctx.lineWidth = 1.4;
+    ctx.beginPath(); ctx.moveTo(-26, -6); ctx.bezierCurveTo(-8, -12, 14, -12, 29, -6); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(-20, 8); ctx.bezierCurveTo(-6, 4, 6, 6, 14, 18); ctx.stroke();
+    // almond eye slot with her eye inside
+    ctx.beginPath(); ctx.moveTo(1, 0); ctx.quadraticCurveTo(14, -14, 27, -2); ctx.quadraticCurveTo(14, 10, 1, 0); ctx.closePath();
+    ctx.fillStyle = C.ink; ctx.fill();
+    ctx.beginPath(); ctx.arc(17, -2.5, 2.2, 0, Math.PI * 2); ctx.fillStyle = C.moon; ctx.fill();
+    // antennae sweep forward from the helmet's brow
+    ctx.save(); ctx.translate(14, -27); ctx.scale(-1, 1); ctx.globalAlpha = 0.6; antenna(ctx, p.antenna * 0.8 - 0.2, -1); ctx.restore();
+    ctx.save(); ctx.translate(18, -25); ctx.scale(-1, 1); antenna(ctx, p.antenna - 0.05, -1); ctx.restore();
     ctx.restore();
   }
 
